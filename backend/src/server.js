@@ -14,25 +14,22 @@ const { log } = require('./utils/logger');
 dotenv.config();
 const app = express();
 const server = http.createServer(app);
-const configuredOrigins = [process.env.FRONTEND_URL, process.env.ALLOWED_ORIGINS, process.env.CORS_ORIGINS]
-  .filter(Boolean)
-  .flatMap(value => value.split(','))
-  .map(origin => origin.trim().replace(/\/$/, ''))
-  .filter(Boolean);
-const allowedOrigins = configuredOrigins.length ? configuredOrigins : ['*'];
-const isOriginAllowed = origin => !origin || allowedOrigins.includes('*') || allowedOrigins.includes(origin);
-const corsOrigin = (origin, callback) => {
-  if (isOriginAllowed(origin)) return callback(null, true);
-  return callback(new Error('CORS origin is not allowed'));
-};
-const io = new Server(server, { cors: { origin: corsOrigin, methods: ['GET', 'POST'] } });
-const PORT = process.env.PORT || 3000;
+const io = new Server(server, {
+  cors: {
+    origin: '*',
+    methods: ['GET', 'POST']
+  }
+});
+const PORT = process.env.PORT || 10000;
 
-app.use(cors({ origin: corsOrigin, methods: ['GET', 'POST', 'OPTIONS'] }));
+app.use(cors({
+  origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
+}));
 app.use(express.json());
 app.use('/api', trainRoutes);
 app.use('/api', analyticsRoutes);
-app.use('/api', createHealthRouter({ io, frontendUrl: process.env.FRONTEND_URL }));
+app.use('/api', createHealthRouter());
 app.use(express.static(path.join(__dirname, '../../frontend')));
 
 app.get(/^\/(?!api(?:\/|$)).*/, (req, res) => {

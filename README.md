@@ -61,7 +61,7 @@ Create a **Web Service** from this repository using:
 - **Start Command:** `npm start`
 - **Environment:** `Node`
 - **Environment variable:** `NODE_ENV=production`
-- **Environment variable:** `FRONTEND_URL=https://track-eta-topaz.vercel.app/`
+- **Environment variable:** `FRONTEND_URL=https://track-eta-topaz.vercel.app`
 - **Environment variable:** `ALLOWED_ORIGINS=https://track-eta-topaz.vercel.app`
 
 Add the custom Vercel domain too, separated by commas, when applicable:
