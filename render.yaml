@@ -1,10 +1,12 @@
 services:
   - type: web
-    name: sih-eta-forecast
+    name: track-eta
     runtime: node
-    rootDir: .
-    buildCommand: npm run install:backend
+    rootDir: backend
+    buildCommand: npm install
     startCommand: npm start
     envVars:
       - key: NODE_ENV
         value: production
+      - key: ALLOWED_ORIGINS
+        sync: false

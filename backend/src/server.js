@@ -14,10 +14,16 @@ const { log } = require('./utils/logger');
 dotenv.config();
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server, { cors: { origin: '*' } });
-const PORT = process.env.PORT || 8000;
+const allowedOrigins = (process.env.ALLOWED_ORIGINS || process.env.CORS_ORIGINS || '*').split(',').map(origin => origin.trim()).filter(Boolean);
+const isOriginAllowed = origin => !origin || allowedOrigins.includes('*') || allowedOrigins.includes(origin);
+const corsOrigin = (origin, callback) => {
+  if (isOriginAllowed(origin)) return callback(null, true);
+  return callback(new Error('CORS origin is not allowed'));
+};
+const io = new Server(server, { cors: { origin: corsOrigin, methods: ['GET', 'POST'] } });
+const PORT = process.env.PORT || 3000;
 
-app.use(cors());
+app.use(cors({ origin: corsOrigin, methods: ['GET', 'POST', 'OPTIONS'] }));
 app.use(express.json());
 app.use('/api', trainRoutes);
 app.use('/api', analyticsRoutes);
@@ -41,4 +47,4 @@ setInterval(async () => {
   }));
 }, 2000);
 
-server.listen(PORT, () => log(`Track ETI running on http://localhost:${PORT}`));
+server.listen(PORT, () => log(`Track ETA running on port ${PORT}`));

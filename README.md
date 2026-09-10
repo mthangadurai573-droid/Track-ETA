@@ -48,6 +48,53 @@ Open: `http://localhost:8000`
 
 No Python or Uvicorn is required for this version.
 
+## Deploy frontend on Vercel and backend on Render
+
+The frontend uses `https://track-eta.onrender.com` as its default backend URL. The URL can be overridden before the frontend scripts load with `window.__BACKEND_URL__`, while the API helper and Socket.IO client continue to use the same configured value.
+
+### Render settings
+
+Create a **Web Service** from this repository using:
+
+- **Root Directory:** `backend`
+- **Build Command:** `npm install`
+- **Start Command:** `npm start`
+- **Environment:** `Node`
+- **Environment variable:** `NODE_ENV=production`
+- **Environment variable:** `ALLOWED_ORIGINS=https://YOUR-VERCEL-PROJECT.vercel.app`
+
+Add the custom Vercel domain too, separated by commas, when applicable:
+
+```text
+ALLOWED_ORIGINS=https://YOUR-VERCEL-PROJECT.vercel.app,https://www.example.com
+```
+
+The included `render.yaml` contains the same settings and names the service `track-eta`, so its expected public URL is `https://track-eta.onrender.com`.
+
+### Vercel settings
+
+Import the repository as a static project with:
+
+- **Root Directory:** repository root (`sih_eta_project`)
+- **Framework Preset:** `Other`
+- **Build Command:** leave empty
+- **Output Directory:** `frontend`
+- **Install Command:** leave empty
+
+The included `vercel.json` already sets the output directory. Do not set the Vercel root directory to `frontend` unless you also change the output directory to `.`.
+
+### Deployment checks
+
+After both services are deployed, verify:
+
+```text
+https://track-eta.onrender.com/api/health
+https://track-eta.onrender.com/api/trains
+https://YOUR-VERCEL-PROJECT.vercel.app/
+```
+
+The first URL should return JSON with `ok: true`; the second should return the train array. Open the Vercel page and confirm the connection indicator becomes live and train updates continue through Socket.IO. Render may take a short time to wake from its free-service sleep state on the first request.
+
 ## Production realtime feed
 
 The application supports an authorized railway/GPS provider without changing the frontend. Configure these backend environment variables:
