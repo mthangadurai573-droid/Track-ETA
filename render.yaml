@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: sih-eta-forecast
+    runtime: node
+    rootDir: .
+    buildCommand: npm run install:backend
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production

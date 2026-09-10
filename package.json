@@ -1,0 +1,12 @@
+{
+  "name": "sih-eta-project",
+  "version": "3.0.0",
+  "private": true,
+  "description": "Dynamic Train ETA Forecast",
+  "scripts": {
+    "install:backend": "npm install --prefix backend",
+    "start": "node backend/src/server.js",
+    "dev": "npm run dev --prefix backend"
+  },
+  "engines": { "node": ">=20" }
+}

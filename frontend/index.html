@@ -1,0 +1,119 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Track ETA</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="logo">
+        <img src="/assets/images/indian-railways-official-logo.jpg" alt="Indian Railways logo" width="38" height="38" style="display:block;flex:0 0 38px;width:38px;height:38px;object-fit:cover;border-radius:50%;border:2px solid #42a9ff;background:#f2f6fb">
+        <div>
+          <b>Track ETA</b>
+        </div>
+      </div>
+      <nav>
+        <button class="nav active" data-page="home">• <span>Home</span></button>
+        <button class="nav" data-page="search">• <span>Train Search</span></button>
+        <button class="nav" data-page="eta">• <span>AI ETA Prediction</span></button>
+        <button class="nav" data-page="delay">• <span>Delay Analytics</span></button>
+        <button class="nav" data-page="crowd">• <span>Passenger Crowd</span></button>
+        <button class="nav" data-page="maintenance">• <span>Maintenance</span></button>
+        <button class="nav" data-page="reports">• <span>Reports</span></button>
+      </nav>
+      <div class="side-foot"><span id="connection">• Connecting...</span></div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div>
+          <h1 id="pageTitle">Track ETA</h1>
+        </div>
+        <div class="top-actions" id="topActions">
+          <span class="train-count"><b id="trainCount">14</b> trains monitored</span>
+          <select id="trainSelect"><option>Loading trains...</option></select>
+          <button class="secondary" id="resetTrain" type="button" title="Reset the selected train simulation">↺ Reset Train</button>
+        </div>
+      </header>
+      <div id="error" class="error"></div>
+
+      <section id="page-home" class="page active">
+        <div class="hero-banner">
+          <div>
+            <div class="pill">AI-POWERED RAILWAY INTELLIGENCE</div>
+            <h2>Dynamic Forecast of Expected Time of Arrival</h2>
+            <p>Monitor long- and short-distance trains, predict ETA, analyze delays and identify operational risks from one dashboard.</p>
+            <button class="primary" data-go="dashboard">View Live Trains →</button>
+          </div>
+          <div class="hero-number"><b id="heroTrainCount">14</b><span>Trains Monitored</span></div>
+        </div>
+        <div class="stat-grid">
+          <div class="mini"><span>●</span><b id="homeOnTime">—</b><small>On Time</small></div>
+          <div class="mini"><span>●</span><b id="homeDelayed">—</b><small>Delayed</small></div>
+          <div class="mini"><span>●</span><b id="homeCritical">—</b><small>Critical</small></div>
+          <div class="mini"><span>●</span><b id="homeCrowd">—</b><small>High Crowd</small></div>
+        </div>
+        <div class="two-col home-train-layout">
+          <div class="card">
+            <h3>Monitored Train Services</h3>
+            <div id="homeTrainList" class="train-list"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="page-dashboard" class="page">
+        <div class="page-head"><div><p>Live train location and speed update every 2 seconds.</p></div><span class="live-dot">• LIVE</span></div>
+        <div class="dashboard-grid">
+          <div class="card hero-card">
+            <div id="routeSub" class="muted">Loading...</div>
+            <h2 id="routeTitle">—</h2>
+            <div class="eta"><small>AI Predicted Arrival</small><strong id="etaValue">--:--</strong><span id="statusBadge" class="badge delayed">Waiting</span></div>
+            <div class="stats">
+              <div><small>Current Location</small><b id="curLoc">—</b></div>
+              <div><small>Next Station</small><b id="nextStation">—</b></div>
+              <div><small>Current Speed</small><b id="curSpeed">—</b></div>
+            </div>
+            <div class="track"><div><span id="fromLbl">Start</span><span id="toLbl">Destination</span></div><div class="bar"><i id="progressBar"></i></div></div>
+            <p id="whyLine" class="why">Waiting for live prediction...</p>
+          </div>
+          <div class="card map-card">
+            <div class="card-title"><h3>Live Train Location</h3><span>OpenStreetMap</span></div>
+            <div id="map"></div>
+          </div>
+        </div>
+        <div class="two-col">
+          <div class="card"><h3>ETA Calculated Using</h3><div id="factorsList"></div></div>
+          <div class="card"><h3>Live Prediction Trend</h3><div class="chart-wrap"><canvas id="delayChart"></canvas></div></div>
+        </div>
+        <div class="card live-operations"><div class="card-title"><h3>Live Operations</h3><span id="liveUpdated">Waiting for update</span></div><div class="live-operations-grid"><div><small>Train speed</small><b id="liveSpeed">—</b><div class="speed-meter" aria-label="Live train speed meter"><i id="speedMeterFill"></i></div><small id="liveSpeedReference">Timetable reference: —</small></div><div><small>Current delay</small><b id="liveDelayValue">—</b></div></div><small id="liveSource" class="live-source">Data source: —</small></div>
+        <div class="footer">Scheduled ETA: <b id="schedEta">--:--</b> • Average travel time: <b id="avgTravelTime">—</b> • Distance: <b id="distCovered">0</b> / <b id="distTotal">0</b> km</div>
+      </section>
+
+      <section id="page-search" class="page"><div class="page-head"><div><h2>Train Search</h2><p>Search all monitored trains by number, name, source or destination.</p></div></div><div class="searchbox"><input id="searchInput" placeholder="Search train number, train name, station..."><span>•</span></div><div id="searchResults" class="search-results"></div></section>
+
+      <section id="page-eta" class="page"><div class="page-head"><div><h2>AI Prediction Module</h2><p>Machine-learning-ready feature layer for dynamic ETA forecasting.</p></div></div><div class="module-grid"><div class="card"><h3>Output</h3><div class="big-output"><b id="etaModuleValue">--:--</b><span>Predicted ETA</span></div><div class="score"><span>Confidence score</span><b id="confidenceScore">—</b></div><div class="score"><span>Delay probability</span><b id="delayProbability">—</b></div></div><div class="card example"><h3>Live Example</h3><div>Current Speed <b id="exSpeed">—</b></div><div>Distance Remaining <b id="exDistance">—</b></div><div>Weather <b id="exWeather">—</b></div><div>Train Crossing <b id="exCrossing">—</b></div><strong>Live location and speed update every 2 seconds.</strong></div></div></section>
+
+      <section id="page-delay" class="page"><div class="page-head"><div><h2>Delay Analytics</h2><p>Understand what is driving ETA deviation across the selected service.</p></div></div><div class="analytics-grid"><div class="card"><h3>Delay Factors</h3><div id="delayFactors"></div></div><div class="card"><h3>Operational Summary</h3><div class="summary"><div><span>Predicted Delay</span><b id="delayTotal">—</b></div><div><span>Top Factor</span><b id="delayTop">—</b></div><div><span>Status</span><b id="delayStatus">—</b></div></div></div></div></section>
+
+      <section id="page-crowd" class="page"><div class="page-head"><div><h2>Passenger Crowd Prediction</h2><p>Live crowd estimate for the selected train and its next station.</p></div></div><div class="module-grid"><div class="card"><h3>Selected Train</h3><div class="input-row"><span>Train</span><b id="crowdTrainName">—</b></div><div class="input-row"><span>Route</span><b id="crowdRoute">—</b></div><div class="input-row"><span>Current location</span><b id="crowdCurrentLocation">—</b></div><div class="input-row"><span>Next station</span><b id="crowdStation">—</b></div></div><div class="card crowd-card"><small>Passenger crowd level</small><h3 id="crowdLevel">—</h3><div class="crowd-meter"><i id="crowdMeter"></i></div><b id="crowdScore">— / 100</b><small id="crowdUpdated">Waiting for update</small></div><div class="card"><h3>Demand Inputs</h3><div class="input-row"><span>Festival calendar</span><b id="crowdFestival">—</b></div><div class="input-row"><span>Ticket bookings</span><b id="crowdBookings">—</b></div><div class="input-row"><span>Previous passengers</span><b id="crowdPrevious">—</b></div></div></div><div class="card crowd-overview"><h3>All Train Crowd Forecasts</h3><div id="crowdTrainList" class="crowd-train-list"><div class="empty">Loading crowd forecasts...</div></div></div></section>
+
+      <section id="page-maintenance" class="page"><div class="page-head"><div><h2>Maintenance Prediction</h2><p>Score uses distance covered, predicted delay, and passenger crowd.</p></div></div><div class="maintenance-grid"><div class="card health"><small>Train Health Score</small><b id="healthScore">—</b><span>Prototype indicator</span></div><div class="card"><h3>Predictive Maintenance</h3><div id="maintenanceList" class="maintenance-list"></div><p id="maintenanceBasis" class="muted"></p></div></div></section>
+
+      <section id="page-reports" class="page"><div class="page-head"><div><h2>Reports</h2><p>Current snapshot of all monitored train services.</p></div><button class="secondary" id="refreshReports">Refresh</button></div><div class="table-wrap"><table><thead><tr><th>Train</th><th>Route</th><th>Predicted Delay</th><th>Crowd</th><th>Status</th></tr></thead><tbody id="reportBody"></tbody></table></div></section>
+    </main>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/map.js"></script>
+  <script src="/js/charts.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>
+

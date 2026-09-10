@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-labelledby="title desc">
+  <title id="title">Indian Railways logo</title>
+  <desc id="desc">Blue railway wheel emblem with IR lettering</desc>
+  <circle cx="48" cy="48" r="44" fill="#f2f6fb" stroke="#42a9ff" stroke-width="4"/>
+  <circle cx="48" cy="48" r="31" fill="none" stroke="#123d70" stroke-width="4"/>
+  <circle cx="48" cy="48" r="7" fill="#123d70"/>
+  <g stroke="#123d70" stroke-width="3" stroke-linecap="round">
+    <path d="M48 17v17M48 62v17M17 48h17M62 48h17M26 26l12 12M58 58l12 12M70 26L58 38M38 58L26 70"/>
+  </g>
+  <path d="M22 67h52M27 75h42" fill="none" stroke="#e07b26" stroke-width="4" stroke-linecap="round"/>
+  <text x="48" y="55" text-anchor="middle" font-family="Georgia,serif" font-size="18" font-weight="700" fill="#123d70">IR</text>
+</svg>
