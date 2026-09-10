@@ -1,5 +1,3 @@
-const API_BASE_URL = window.APP_CONFIG.backendUrl;
-
 function apiUrl(path) {
   return /^https?:\/\//i.test(path) ? path : `${API_BASE_URL}${path.startsWith('/') ? path : `/${path}`}`;
 }

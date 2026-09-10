@@ -50,7 +50,7 @@ No Python or Uvicorn is required for this version.
 
 ## Deploy frontend on Vercel and backend on Render
 
-The frontend uses `https://track-eta.onrender.com` as its default backend URL. The URL can be overridden before the frontend scripts load with `window.__BACKEND_URL__`, while the API helper and Socket.IO client continue to use the same configured value.
+The frontend uses one configured backend URL in `frontend/js/config.js`; the API helper and Socket.IO client use that same value.
 
 ### Render settings
 
@@ -61,12 +61,13 @@ Create a **Web Service** from this repository using:
 - **Start Command:** `npm start`
 - **Environment:** `Node`
 - **Environment variable:** `NODE_ENV=production`
-- **Environment variable:** `ALLOWED_ORIGINS=https://YOUR-VERCEL-PROJECT.vercel.app`
+- **Environment variable:** `FRONTEND_URL=https://track-eta-topaz.vercel.app/`
+- **Environment variable:** `ALLOWED_ORIGINS=https://track-eta-topaz.vercel.app`
 
 Add the custom Vercel domain too, separated by commas, when applicable:
 
 ```text
-ALLOWED_ORIGINS=https://YOUR-VERCEL-PROJECT.vercel.app,https://www.example.com
+ALLOWED_ORIGINS=https://track-eta-topaz.vercel.app,https://www.example.com
 ```
 
 The included `render.yaml` contains the same settings and names the service `track-eta`, so its expected public URL is `https://track-eta.onrender.com`.
@@ -82,6 +83,8 @@ Import the repository as a static project with:
 - **Install Command:** leave empty
 
 The included `vercel.json` already sets the output directory. Do not set the Vercel root directory to `frontend` unless you also change the output directory to `.`.
+
+No Vercel environment variable is required because the production backend URL is configured in the static frontend source. If a different Render service is created, update `frontend/js/config.js` before deploying.
 
 ### Deployment checks
 

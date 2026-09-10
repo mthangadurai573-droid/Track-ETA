@@ -1,9 +1,23 @@
 const express = require('express');
-const { providerStatus } = require('../services/realtime.service');
-const router = express.Router();
 
-router.get('/health', (req, res) => {
-  res.json({ ok: true, service: 'Track ETA Forecast', version: '3.0.0', runtime: 'Node.js', realtime: providerStatus() });
-});
+function createHealthRouter({ io, frontendUrl }) {
+  const router = express.Router();
 
-module.exports = router;
+  router.get('/health', (req, res) => {
+    res.json({
+      ok: true,
+      service: 'Track ETA Forecast',
+      version: '3.0.0',
+      runtime: 'Node.js',
+      realtime: {
+        enabled: Boolean(io && io.engine),
+        url_configured: Boolean(frontendUrl),
+        last_error: null
+      }
+    });
+  });
+
+  return router;
+}
+
+module.exports = createHealthRouter;
